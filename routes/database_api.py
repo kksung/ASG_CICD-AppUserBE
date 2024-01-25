@@ -8,7 +8,7 @@ connectionString = {
     # 'host': '127.0.0.1',
     'host': 'db-freetier.cfd8otxcdmku.ap-northeast-2.rds.amazonaws.com',
     'port': 3306,
-    'database': 'company2',
+    'database': 'company_11',
     'user': 'admin',
     # 'user': 'root',
     # 'password': '1234',
