@@ -52,3 +52,45 @@
 <img src="https://github.com/kksung/ASG_CICD-AppUserBE/assets/110016279/9e6cfee5-ec57-401a-b877-1b6e2b23f50f" width=750 height=300>
 
 - scail-out되었을 때, 5000번 포트로 백엔드 서버가 구동중인 것 확인 (배포 완료 확인!)
+
+<br>
+
+## Troubleshooting & 유의사항
+### ASG Instance 스크립트 실행 오류
+- CodeDeploy-Agent를 포함하여 스크립트 내 패키지가 설치되지 않는 문제
+- 스크립트 설치 중 '-y 옵션' 추가
+- 아래는 '고급 세부 설정 - 사용자 데이터' 최종 스크립트 코드 내용 (scail-out시 실행됨)
+
+```
+#!/bin/bash
+
+# 시스템 업데이트 및 필요 패키지 install
+sudo apt update
+sudo apt install -y ruby
+sudo apt install -y wget
+sudo apt install -y python3-pip
+
+# CodeDeploy-agent install (ap-northeast-2)
+cd /home/ubuntu
+wget https://aws-codedeploy-ap-northeast-2.s3.ap-northeast-2.amazonaws.com
+/latest/install
+chmod +x ./install
+sudo ./install auto
+
+# 도커 설치
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates 
+curl gnupg-agent software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository 
+"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+# 컨테이너 실행
+sudo docker image pull prom/node-exporter-linux-amd64
+sudo docker run -d --name=node-exporter -p 9100:9100 prom/node-exporter-linux-amd64
+```
